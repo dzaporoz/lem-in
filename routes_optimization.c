@@ -44,12 +44,11 @@ static void    sort_routes(t_data *data)
             min = routes->content_size;
         routes = routes->next;
     }
-    min *= 3;
     routes = data->routes;
     new_routes = NULL;
     while (routes)
     {
-        if (routes->content_size > min)
+        if (routes->content_size - min > data->ants)
             ft_lstdel(&routes->content, del_unmalloced_list);
         else
             paste_sort(&new_routes, routes);
@@ -106,53 +105,7 @@ void    cut_dead_ends(t_data *data)
     }
 }
 
-void    leave_the_shortest_route(t_data *data)
-{
-    t_list *route;
-
-    route = data->routes->next;
-    while (route)
-    {
-        ft_lstdel(&route->content, del_unmalloced_list);
-        route = route->next;
-    }
-    if (data->routes->next)
-        ft_lstdel(&data->routes->next, del_unmalloced_list);
-    data->routes->next = NULL;
-}
-
-void    check_is_one_route(t_data *data)
-{
-    t_list *route;
-    t_room *one_route;
-
-    route = data->routes;
-    one_route = (t_room*)((t_list*)route->content)->content;
-    while (route)
-    {
-        if ((t_room*)((t_list*)route->content)->content != one_route)
-            one_route = NULL;
-        route = route->next;
-    }
-    if (one_route)
-    {
-        leave_the_shortest_route(data);
-        return;
-    }
-    route = ((t_room*)data->start)->back_link;
-    one_route = route->content;
-    while (route)
-    {
-        if (route->content != one_route)
-            one_route = NULL;
-        route = route->next;
-    }
-    if (one_route)
-        leave_the_shortest_route(data);
-}
-
 void    routes_optimization(t_data *data)
 {
     sort_routes(data);
-//    check_is_one_route(data);
 }
