@@ -28,6 +28,7 @@ typedef struct      s_data
     t_list          *start;
     t_list          *end;
     t_list          *routes;
+    char        vizualize;
 }                   t_data;
 
 void    read_data(t_data *data);

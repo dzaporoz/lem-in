@@ -23,6 +23,7 @@ static void    back_to_intersection(t_list **stack, t_list **way)
 
     while (*way && *stack && (*way)->content == (*stack)->content)
     {
+        ((t_room*)(*stack)->content)->level = INT_MAX;
         temp = (*stack)->next;
         ft_lstdelone(stack, del_unmalloced_list);
         *stack = temp;

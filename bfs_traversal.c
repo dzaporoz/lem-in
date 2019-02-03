@@ -12,9 +12,10 @@ static void    build_route(t_data *data)
     while (prev_room)
     {
         ft_lstadd(&way, add_link(prev_room));
-        prev_room = prev_room->back_link->content;
+        prev_room = (prev_room->back_link) ? prev_room->back_link->content : NULL;
     }
     data->routes = add_link(way);
+    data->routes->content_size = ft_lstcount(way);
 }
 
 static int    check_dup_pipes(t_list *list, t_room *room)

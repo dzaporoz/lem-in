@@ -6,11 +6,11 @@ static void    add_node(char **string, t_data *data, int room)
     t_room  new_room;
     t_list  *new_room_p;
 
+    ft_bzero(&new_room, sizeof(t_room));
     new_room.name = ft_strdup(*string);
     new_room.x = ft_atoi(string[1]);
     new_room.y = ft_atoi(string[2]);
     new_room.level = INT_MAX;
-    new_room.links = NULL;
     err_flag = (!(ft_atoi_check(string[1], new_room.x) && ft_atoi_check(string[2], new_room.y))) ? 1 : 0;
     ft_splitdel(string);
     if (err_flag || (room == START_ROOM && data->start) || (room == END_ROOM && data->end))
@@ -107,6 +107,10 @@ void    read_data(t_data *data)
         else if (string[0] == '#')
             free(string);
         else
-            error(string, data);
+        {
+            free(string);
+            return ;
+        }
+            //error(string, data);
     }
 }

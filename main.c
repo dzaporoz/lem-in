@@ -27,7 +27,8 @@ int main(int argc, char **argv)
     ft_bzero(&data, sizeof(t_data));
     read_data(&data);
     check_map(&data);
-    cut_dead_ends(&data);
+//    cut_dead_ends(&data);
+data.vizualize = 2;
     if (!((t_room*)data.end->content)->links->next || !((t_room*)data.start->content)->links->next || data.ants == 1)
         breadth_first_traversal(&data);
     else
