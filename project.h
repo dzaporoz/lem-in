@@ -9,12 +9,14 @@
 # define END_ROOM 1
 # define REG_ROOM 2
 
+# define START data->start->content
+# define END data->end->content
 
 typedef struct      s_room
 {
     char            *name;
-    short             x;
-    short             y;
+    int             x;
+    int             y;
     t_list          *links;
     unsigned int    ant;
     int             level;
@@ -28,21 +30,30 @@ typedef struct      s_data
     t_list          *start;
     t_list          *end;
     t_list          *routes;
-    char        vizualize;
+    int             stat_nodes;
+    int             stat_edges;
+    int             stat_lines;
+    int 			stat_min_lines;
+    char            flag_vizualize;
+    unsigned int	flag_put_routes:1;
+    unsigned int	flag_put_stat:1;
+    unsigned int	flag_colorize:1;
+
 }                   t_data;
 
 void    read_data(t_data *data);
 void    check_map(t_data *data);
 void    depth_first_traversal(t_data *data);
 void    error(char *string, t_data *data);
-void    del_unmalloced_list(void *p, size_t size);
 t_list  *add_link(void *p);
 void    breadth_first_traversal(t_data *data);
 void    free_data(t_data *data);
 void    print_moves(t_data *data);
 void    routes_optimization(t_data *data);
 void    print_routes(t_data *data);
-void    cut_dead_ends(t_data *data);
+void    put_stat_data(t_data *data);
+void    print_situation(t_data *data);
+void	print_main_data(t_data *data);
 
 //move to ft_lib
 void    ft_splitdel(char **chrarr);
