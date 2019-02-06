@@ -12,18 +12,6 @@
 
 #include "../project.h"
 
-void	ft_splitdel(char **chrarr)
-{
-	int n;
-
-	n = 0;
-	while (chrarr[n])
-		free(chrarr[n++]);
-	free(chrarr);
-}
-
-
-
 void	read_args(t_data *data, char **argv)
 {
 	argv++;
