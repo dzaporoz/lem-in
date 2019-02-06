@@ -30,10 +30,10 @@ typedef struct      s_data
     t_list          *start;
     t_list          *end;
     t_list          *routes;
-    int             stat_nodes;
-    int             stat_edges;
-    int             stat_lines;
-    int 			stat_min_lines;
+    int             s_nodes;
+    int             s_edges;
+    int             s_lines;
+    int 			s_req_lines;
     char            flag_vizualize;
     unsigned int	flag_put_routes:1;
     unsigned int	flag_put_stat:1;
@@ -54,6 +54,7 @@ void    print_routes(t_data *data);
 void    put_stat_data(t_data *data);
 void    print_situation(t_data *data);
 void	print_main_data(t_data *data);
+void 	delete_link_from_room(t_list **links, void *content);
 
 //move to ft_lib
 void    ft_splitdel(char **chrarr);

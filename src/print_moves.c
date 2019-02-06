@@ -97,8 +97,10 @@ void	put_one_move(t_data *data, t_list **ants, int counter, int *first_flag)
 		print_situation(data);
 	else if (data->flag_colorize && ants[counter]->content == data->end->content)
 		ft_printf(FT_PRINTF_COLOR_RED);
-	ft_printf("%sL%d-%s" FT_PRINTF_COLOR_RESET, (*first_flag) ? " " : "", counter,
+	ft_printf("%sL%d-%s", (*first_flag) ? " " : "", counter,
 			  ((t_room*)(ants[counter]->content))->name);
+	if (data->flag_colorize)
+		ft_printf(FT_PRINTF_COLOR_RESET);
 	*first_flag = 1;
 }
 
@@ -124,7 +126,7 @@ void	print_moves(t_data *data)
 					print_situation(data);
 				else
 					ft_putstr("\n");
-				data->stat_lines += 1;
+				data->s_lines += 1;
 			}
 		}
 }

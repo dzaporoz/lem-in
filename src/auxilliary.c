@@ -6,11 +6,36 @@
 /*   By: dzaporoz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/05 17:06:50 by dzaporoz          #+#    #+#             */
-/*   Updated: 2019/02/05 17:07:36 by dzaporoz         ###   ########.fr       */
+/*   Updated: 2019/02/06 13:10:06 by dzaporoz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../project.h"
+
+void	delete_link_from_room(t_list **links, void *content)
+{
+	t_list *temp;
+	t_list *p;
+
+	if ((*links)->content == content)
+	{
+		temp = (*links)->next;
+		free(*links);
+		*links = temp;
+	}
+	else
+	{
+		p = *links;
+		while (p && p->next->content != content)
+			p = p->next;
+		if (p)
+		{
+			temp = p->next;
+			p->next = temp->next;
+			free(temp);
+		}
+	}
+}
 
 t_list	*add_link(void *p)
 {

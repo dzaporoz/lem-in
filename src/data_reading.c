@@ -23,8 +23,8 @@ static void		add_node(char **string, t_data *data, int room)
 	new_room.x = ft_atoi(string[1]);
 	new_room.y = ft_atoi(string[2]);
 	new_room.level = INT_MAX;
-	err_flag = (!(ft_atoi_check(string[1], new_room.x) &&
-			ft_atoi_check(string[2], new_room.y))) ? 1 : 0;
+	err_flag = (!(ft_itoa_chk(string[1], new_room.x) &&
+			ft_itoa_chk(string[2], new_room.y))) ? 1 : 0;
 	ft_splitdel(string);
 	if (err_flag || (room == START_ROOM && data->start)
 			|| (room == END_ROOM && data->end))
@@ -35,7 +35,7 @@ static void		add_node(char **string, t_data *data, int room)
 		data->start = new_room_p;
 	else if (room == END_ROOM)
 		data->end = new_room_p;
-	data->stat_nodes += 1;
+	data->s_nodes += 1;
 }
 
 static void		read_node_data(char *string, t_data *data, int room)
@@ -84,7 +84,7 @@ static void		add_edge(char *string, t_data *data)
 			(link = link->next);
 	ft_lstadd(&((t_room*)room1->content)->links, add_link(room2->content));
 	ft_lstadd(&((t_room*)room2->content)->links, add_link(room1->content));
-	data->stat_edges += 1;
+	data->s_edges += 1;
 }
 
 static void		read_comment(char *string, t_data *data)
@@ -92,7 +92,7 @@ static void		read_comment(char *string, t_data *data)
 	if (string[0] != '#')
 		error(string, data);
 	else if (ft_strnequ(string, "#Here is the number of lines required: ", 39))
-		data->stat_min_lines = ft_atoi(&string[39]);
+		data->s_req_lines = ft_atoi(&string[39]);
 	free(string);
 }
 
@@ -104,7 +104,7 @@ void			read_data(t_data *data)
 	if (get_next_line(0, &string) < 1)
 		error(string, data);
 	data->ants = ft_atoi(string);
-	if (data->ants < 1 || !ft_atoi_check(string, data->ants))
+	if (data->ants < 1 || !ft_itoa_chk(string, data->ants))
 		error(string, data);
 	free(string);
 	while ((rd = get_next_line(0, &string)))

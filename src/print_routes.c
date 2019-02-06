@@ -6,7 +6,7 @@
 /*   By: dzaporoz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/05 16:51:24 by dzaporoz          #+#    #+#             */
-/*   Updated: 2019/02/05 16:55:11 by dzaporoz         ###   ########.fr       */
+/*   Updated: 2019/02/06 13:12:12 by dzaporoz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static int	put_route(t_data *data, t_list *route, int route_index)
 
 	if (!((t_list*)route->content)->content_size)
 		return (0);
+	ft_putstr("\n");
 	ft_printf(FT_PRINTF_COLOR_GREEN "Route #%d (%d nodes):\n"
 			FT_PRINTF_COLOR_RESET, route_index, route->content_size);
 	room = route->content;
@@ -32,35 +33,6 @@ static int	put_route(t_data *data, t_list *route, int route_index)
 	}
 	ft_printf(";\n%s", (route->next) ? "\n" : "");
 	return (1);
-}
-
-void		put_stat_data(t_data *data)
-{
-	t_list	*route;
-	int		used_routes;
-
-	used_routes = 0;
-	route = data->routes;
-	while (route)
-	{
-		if (((t_list*)route->content)->content_size)
-			used_routes++;
-		route = route->next;
-	}
-	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "STATISTIC:\n");
-	ft_printf("%-37s %d\n", "1. Number of ants:", data->ants);
-	ft_printf("%-37s %d\n", "2. Number of rooms (nodes):", data->stat_nodes);
-	ft_printf("%-37s %d\n", "3. Number of transitions (edges):",
-			data->stat_edges);
-	ft_printf("%-37s %d\n", "4. Number of found paths:",
-			ft_lstcount(data->routes));
-	ft_printf("%-37s %d\n", "5. Number of used paths:", used_routes);
-	ft_printf("%-37s %d / %d ", "6. Number of lines (taked / minimum):",
-			data->stat_lines, data->stat_min_lines);
-	if (data->stat_lines <= data->stat_min_lines)
-		ft_printf("\u2713\n");
-	else
-		ft_printf(FT_PRINTF_COLOR_BOLD_RED "\u274C\n" FT_PRINTF_COLOR_RESET);
 }
 
 void		print_routes(t_data *data)
@@ -81,13 +53,41 @@ void		print_routes(t_data *data)
 	n = 1;
 	while (route)
 	{
-		n = put_route(data, route, n);
+		n += put_route(data, route, n);
 		route = route->next;
 	}
-	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "\nNumber of effective routes: %d\n"
+	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "Number of effective routes: %d\n"
 			FT_PRINTF_COLOR_RESET, routes_count);
 	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "Number of nodes: %d\n"
 			FT_PRINTF_COLOR_RESET, ft_lstcount(data->rooms));
+}
+
+void		put_stat_data(t_data *data)
+{
+	t_list	*route;
+	int		used_paths;
+
+	used_paths = 0;
+	route = data->routes;
+	while (route)
+	{
+		used_paths += (((t_list*)route->content)->content_size) ? 1 : 0;
+		route = route->next;
+	}
+	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "\nSTATISTIC:\n");
+	ft_printf("%-39s %d\n", "1. Number of ants:", data->ants);
+	ft_printf("%-39s %d\n", "2. Number of rooms (nodes):", data->s_nodes);
+	ft_printf("%-39s %d\n", "3. Number of transitions (edges):",
+			data->s_edges);
+	ft_printf("%-39s %d\n", "4. Number of found paths:",
+			ft_lstcount(data->routes));
+	ft_printf("%-39s %d\n", "5. Number of used paths:", used_paths);
+	ft_printf("%-39s %d / %.d%s ", "6. Number of lines (taked / required):",
+			data->s_lines, data->s_req_lines, (data->s_req_lines) ? "" : "-");
+	if (data->s_lines <= data->s_req_lines)
+		ft_printf("\u2713\n");
+	else if (data->s_req_lines != 0)
+		ft_printf(FT_PRINTF_COLOR_BOLD_RED "\u274C\n" FT_PRINTF_COLOR_RESET);
 }
 
 void		print_situation(t_data *data)
@@ -121,37 +121,21 @@ void		print_situation(t_data *data)
 void		print_links(t_list *rooms)
 {
 	t_list *link;
-	t_list *p;
-	t_list *temp;
 
 	while (rooms)
 	{
 		link = ((t_room*)rooms->content)->links;
 		while (link)
 		{
-			ft_printf("%s-%s\n", ((t_room*)rooms->content)->name, ((t_room*)link->content)->name);
-			p = ((t_room*)link->content)->links;
-			if (p->content == rooms->content)
-			{
-				temp = p->next;
-				free(p);
-				((t_room*)link->content)->links = temp;
-			}
-			else
-				while (p)
-				{
-					if (p->next->content == rooms->content)
-					{
-						temp = p->next->next;
-						free(p->next);
-						p->next = temp;
-					}
-					p = p->next;
-				}
+			ft_printf("%s-%s\n", ((t_room*)rooms->content)->name,
+					((t_room*)link->content)->name);
+			delete_link_from_room(&((t_room*)link->content)->links,
+					rooms->content);
 			link = link->next;
 		}
 		rooms = rooms->next;
 	}
+	ft_putstr("\n");
 }
 
 void		print_main_data(t_data *data)
@@ -173,5 +157,4 @@ void		print_main_data(t_data *data)
 	room = data->end->content;
 	ft_printf("##end\n%s %d %d\n", room->name, room->x, room->y);
 	print_links(data->rooms);
-
 }
