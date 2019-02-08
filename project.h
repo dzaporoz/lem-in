@@ -29,36 +29,40 @@ typedef struct      s_data
     t_list          *rooms;
     t_list          *start;
     t_list          *end;
-    t_list          *routes;
+    t_list          *all_paths;
+    t_list			*path_adjacency;
+    t_list			*unique_paths;
     int             s_nodes;
     int             s_edges;
     int             s_lines;
     int 			s_req_lines;
+    int 			current_efficiency;
     char            flag_vizualize;
     unsigned int	flag_put_routes:1;
     unsigned int	flag_put_stat:1;
     unsigned int	flag_colorize:1;
 
+
 }                   t_data;
 
 void    read_data(t_data *data);
 void    check_map(t_data *data);
-void    depth_first_traversal(t_data *data);
 void    error(char *string, t_data *data);
 t_list  *add_link(void *p);
-void    breadth_first_traversal(t_data *data);
 void    free_data(t_data *data);
 void    print_moves(t_data *data);
-void    routes_optimization(t_data *data);
 void    print_routes(t_data *data);
 void    put_stat_data(t_data *data);
 void    print_situation(t_data *data);
 void	print_main_data(t_data *data);
 void 	delete_link_from_room(t_list **links, void *content);
+void	find_paths(t_data *data);
+void	sort_paths(t_data *data);
 
-//move to ft_lib
-void    ft_splitdel(char **chrarr);
-int     ft_atoi_check(char *string, int integer);
+int 	check_path_uniqueness(t_list *path_adjacency);
+void 	save_paths(t_data *data, t_list *path_adjacency, t_list **unique_paths);
+void	prepare_paths_data(t_data *data);
+void 	path_selection(t_data *data, t_list *path);
 
 
 

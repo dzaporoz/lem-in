@@ -102,7 +102,7 @@ void			read_data(t_data *data)
 	int		rd;
 
 	if (get_next_line(0, &string) < 1)
-		error(string, data);
+		error(NULL, data);
 	data->ants = ft_atoi(string);
 	if (data->ants < 1 || !ft_itoa_chk(string, data->ants))
 		error(string, data);

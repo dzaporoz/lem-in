@@ -18,15 +18,15 @@ void	set_routes(t_data *data, t_list **ants)
 	int		i;
 	t_list	*route;
 
-	route = data->routes;
+	route = data->unique_paths;
 	while (route)
 	{
 		((t_list*)route->content)->content_size = 0;
 		route = route->next;
 	}
 	n = 1;
-	route = data->routes;
-	i = data->routes->content_size;
+	route = data->unique_paths;
+	i = data->unique_paths->content_size;
 	while (n <= data->ants)
 	{
 		if (route->content_size - 1 < i)
@@ -37,7 +37,7 @@ void	set_routes(t_data *data, t_list **ants)
 		route = route->next;
 		if (!route)
 		{
-			route = data->routes;
+			route = data->unique_paths;
 			i++;
 		}
 	}
@@ -110,6 +110,8 @@ void	print_moves(t_data *data)
 	int		counter;
 	int		first;
 
+	if (!data->unique_paths)
+		error(NULL, data);
 	counter = 0;
 	set_routes(data, ants);
 	while (((t_room*)data->end->content)->ant != data->ants && !(counter = 0) && !(first = 0))
@@ -117,8 +119,7 @@ void	print_moves(t_data *data)
 		{
 			if (ants[counter]->content != data->end->content)
 				if (!((t_room*)ants[counter]->next->content)->ant ||
-						ants[counter]->next->content == data->end->content ||
-						set_alternative_route(data, &ants[counter]))
+						ants[counter]->next->content == data->end->content)// || set_alternative_route(data, &ants[counter]))
 					put_one_move(data, ants, counter, &first);
 			if (counter == data->ants)
 			{

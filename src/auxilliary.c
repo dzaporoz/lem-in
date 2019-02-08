@@ -67,16 +67,26 @@ void	free_data(t_data *data)
 	t_list	*temp;
 
 	ft_lstdel(&data->rooms, free_room_data);
-	if (data->routes)
+	if (data->all_paths)
 	{
-		temp = data->routes;
+		temp = data->all_paths;
 		while (temp)
 		{
 			ft_lstdel(&temp->content, NULL);
 			temp = temp->next;
 		}
-		ft_lstdel(&data->routes, NULL);
+		ft_lstdel(&data->all_paths, NULL);
 	}
+/*	if (data->path_adjacency)
+	{
+		temp = data->path_adjacency;
+		while (temp)
+		{
+			ft_lstdel(&temp->content, NULL);
+			temp = temp->next;
+		}
+		ft_lstdel(&data->all_paths, NULL);
+	}*/
 	ft_bzero(data, sizeof(t_data));
 }
 

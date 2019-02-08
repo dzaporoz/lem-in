@@ -92,7 +92,7 @@ void		depth_first_traversal(t_data *data)
 	{
 		ft_lstadd(&way, add_link(stack->content));
 		if (stack->content == data->start->content)
-			save_route(&data->routes, way);
+			save_route(&data->all_paths, way);
 		if (!((t_room*)stack->content)->links->next || stack->content == START
 					|| (stack->content == data->end->content && way->next))
 			back_to_intersection(&stack, &way);
@@ -113,5 +113,5 @@ void		depth_first_traversal(t_data *data)
 				back_to_intersection(&stack, &way);
 		}
 	}
-	routes_optimization(data);
+	sort_paths(data);
 }

@@ -24,8 +24,8 @@ static int	put_route(t_data *data, t_list *route, int route_index)
 	room = route->content;
 	while (room)
 	{
-		if (room->content != START && room->content !=
-				END && ((t_room*)room->content)->back_link->next)
+		if (room->content != START && room->content != END &&
+			((t_room*)room->content)->back_link && ((t_room*)room->content)->back_link->next)
 			ft_printf(FT_PRINTF_COLOR_BOLD_YELLOW);
 		ft_printf("%s" FT_PRINTF_COLOR_MAGENTA "%s" FT_PRINTF_COLOR_RESET,
 				((t_room*)room->content)->name, (room->next) ? " -> " : "");
@@ -41,7 +41,7 @@ void		print_routes(t_data *data)
 	int		routes_count;
 	int		n;
 
-	route = data->routes;
+	route = data->all_paths;
 	routes_count = 0;
 	while (route)
 	{
@@ -49,14 +49,14 @@ void		print_routes(t_data *data)
 			routes_count++;
 		route = route->next;
 	}
-	route = data->routes;
+	route = data->all_paths;
 	n = 1;
 	while (route)
 	{
 		n += put_route(data, route, n);
 		route = route->next;
 	}
-	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "Number of effective routes: %d\n"
+	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "Number of effective all_paths: %d\n"
 			FT_PRINTF_COLOR_RESET, routes_count);
 	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "Number of nodes: %d\n"
 			FT_PRINTF_COLOR_RESET, ft_lstcount(data->rooms));
@@ -64,30 +64,22 @@ void		print_routes(t_data *data)
 
 void		put_stat_data(t_data *data)
 {
-	t_list	*route;
-	int		used_paths;
-
-	used_paths = 0;
-	route = data->routes;
-	while (route)
-	{
-		used_paths += (((t_list*)route->content)->content_size) ? 1 : 0;
-		route = route->next;
-	}
 	ft_printf(FT_PRINTF_COLOR_BOLD_GREEN "\nSTATISTIC:\n");
 	ft_printf("%-39s %d\n", "1. Number of ants:", data->ants);
 	ft_printf("%-39s %d\n", "2. Number of rooms (nodes):", data->s_nodes);
 	ft_printf("%-39s %d\n", "3. Number of transitions (edges):",
 			data->s_edges);
 	ft_printf("%-39s %d\n", "4. Number of found paths:",
-			ft_lstcount(data->routes));
-	ft_printf("%-39s %d\n", "5. Number of used paths:", used_paths);
+			ft_lstcount(data->all_paths));
+	ft_printf("%-39s %d\n", "5. Number of used paths:", ft_lstcount(data->unique_paths));
 	ft_printf("%-39s %d / %.d%s ", "6. Number of lines (taked / required):",
-			data->s_lines, data->s_req_lines, (data->s_req_lines) ? "" : "-");
+			data->s_lines, data->s_req_lines, (data->s_req_lines) ? "" : "-\n");
 	if (data->s_lines <= data->s_req_lines)
 		ft_printf("\u2713\n");
 	else if (data->s_req_lines != 0)
 		ft_printf(FT_PRINTF_COLOR_BOLD_RED "\u274C\n" FT_PRINTF_COLOR_RESET);
+
+	ft_printf("Efficiency: %d\n", data->current_efficiency);
 }
 
 void		print_situation(t_data *data)
@@ -99,7 +91,7 @@ void		print_situation(t_data *data)
 	sleep(1);
 	system("clear");
 	route_index = 0;
-	route = data->routes;
+	route = data->all_paths;
 	while (route)
 	{
 		if (((t_list*)route->content)->content_size)

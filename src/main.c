@@ -34,11 +34,14 @@ void	read_args(t_data *data, char **argv)
 		else
 		{
 			ft_printf("\nusage: ./lem-in [option]\noptions:\n\t\t--help : to "
-					"read the manual");
+					"read the manual\n");
+			exit(EXIT_SUCCESS);
 		}
 		argv++;
 	}
 }
+
+
 
 int		main(int argc, char **argv)
 {
@@ -49,15 +52,14 @@ int		main(int argc, char **argv)
 		read_args(&data, argv);
 	read_data(&data);
 	check_map(&data);
-	if (!((t_room*)data.end->content)->links->next ||
-			!((t_room*)data.start->content)->links->next || data.ants == 1)
-		breadth_first_traversal(&data);
-	else
-		depth_first_traversal(&data);
-	if (!data.routes)
+	find_paths(&data);
+//data.flag_vizualize = 2;
+	if (!data.all_paths)
 		error(NULL, &data);
+	sort_paths(&data);
+	prepare_paths_data(&data);
 	((t_room*)data.start->content)->ant = data.ants;
-	print_main_data(&data);
+//	print_main_data(&data);
 	print_moves(&data);
 	if (data.flag_put_stat)
 		put_stat_data(&data);
