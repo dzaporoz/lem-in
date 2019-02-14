@@ -12,31 +12,6 @@
 
 #include "../project.h"
 
-void	delete_link_from_room(t_list **links, void *content)
-{
-	t_list *temp;
-	t_list *p;
-
-	if ((*links)->content == content)
-	{
-		temp = (*links)->next;
-		free(*links);
-		*links = temp;
-	}
-	else
-	{
-		p = *links;
-		while (p && p->next->content != content)
-			p = p->next;
-		if (p)
-		{
-			temp = p->next;
-			p->next = temp->next;
-			free(temp);
-		}
-	}
-}
-
 t_list	*add_link(void *p)
 {
 	t_list	*new;
@@ -48,46 +23,26 @@ t_list	*add_link(void *p)
 	return (new);
 }
 
-void	free_room_data(void *data, size_t size)
+void	del_room_backlinks(t_list *room)
 {
-	t_room *room_data;
-
-	room_data = (t_room*)data;
-	if (room_data->back_link)
-		ft_lstdel(&room_data->back_link, NULL);
-	if (room_data->links)
-		ft_lstdel(&room_data->links, NULL);
-	ft_strdel(&room_data->name);
-	ft_bzero(room_data, size);
-	free(room_data);
+	((t_room*)room->content)->level = INT_MAX;
+	ft_lstdel(&((t_room*)room->content)->back_link, NULL);
 }
 
-void	free_data(t_data *data)
+void	close_rooms(t_list *room)
 {
-	t_list	*temp;
+	((t_room*)room->content)->level = 0;
+}
 
-	ft_lstdel(&data->rooms, free_room_data);
-	if (data->all_paths)
+int		isnt_dupl(t_list *list, void *content)
+{
+	while (list)
 	{
-		temp = data->all_paths;
-		while (temp)
-		{
-			ft_lstdel(&temp->content, NULL);
-			temp = temp->next;
-		}
-		ft_lstdel(&data->all_paths, NULL);
+		if (list->content == content)
+			return (0);
+		list = list->next;
 	}
-/*	if (data->path_adjacency)
-	{
-		temp = data->path_adjacency;
-		while (temp)
-		{
-			ft_lstdel(&temp->content, NULL);
-			temp = temp->next;
-		}
-		ft_lstdel(&data->all_paths, NULL);
-	}*/
-	ft_bzero(data, sizeof(t_data));
+	return (1);
 }
 
 void	error(char *string, t_data *data)

@@ -6,7 +6,7 @@
 /*   By: dzaporoz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/05 16:57:21 by dzaporoz          #+#    #+#             */
-/*   Updated: 2019/02/05 16:57:24 by dzaporoz         ###   ########.fr       */
+/*   Updated: 2019/02/13 16:14:43 by dzaporoz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,12 @@ static void		read_node_data(char *string, t_data *data, int room)
 		if (get_next_line(0, &string) < 1)
 			error(string, data);
 	}
+	while (string[0] == '#')
+	{
+		free(string);
+		if (get_next_line(0, &string) < 1)
+			error(string, data);
+	}
 	if (ft_count_words(string, ' ') != 3 || *string == 'L')
 		error(string, data);
 	room_data = ft_strsplit(string, ' ');
@@ -89,7 +95,13 @@ static void		add_edge(char *string, t_data *data)
 
 static void		read_comment(char *string, t_data *data)
 {
-	if (string[0] != '#')
+	if (ft_isdigit(string[0]) && !data->ants)
+	{
+		data->ants = ft_atoi(string);
+		if (data->ants < 1 || !ft_itoa_chk(string, data->ants))
+			error(string, data);
+	}
+	else if (string[0] != '#')
 		error(string, data);
 	else if (ft_strnequ(string, "#Here is the number of lines required: ", 39))
 		data->s_req_lines = ft_atoi(&string[39]);
@@ -101,12 +113,12 @@ void			read_data(t_data *data)
 	char	*string;
 	int		rd;
 
-	if (get_next_line(0, &string) < 1)
-		error(NULL, data);
-	data->ants = ft_atoi(string);
-	if (data->ants < 1 || !ft_itoa_chk(string, data->ants))
-		error(string, data);
-	free(string);
+	while (!data->ants)
+	{
+		if (get_next_line(0, &string) < 1)
+			error(NULL, data);
+		read_comment(string, data);
+	}
 	while ((rd = get_next_line(0, &string)))
 	{
 		if (rd < 0)

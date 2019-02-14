@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   prepare_paths_data.c                             :+:      :+:    :+:   */
+/*   prepare_paths_data.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dzaporoz <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/05 16:56:21 by dzaporoz          #+#    #+#             */
-/*   Updated: 2019/02/05 16:56:44 by dzaporoz         ###   ########.fr       */
+/*   Updated: 2019/02/12 20:20:33 by dzaporoz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,29 @@ static void	add_links_to_path(t_data *data)
 	t_list	*route;
 	t_list	*room;
 
+	room = data->rooms;
+	while (room)
+	{
+		ft_lstdel(&((t_room*)room->content)->back_link, NULL);
+		room = room->next;
+	}
 	route = data->all_paths;
 	while (route)
 	{
 		room = route->content;
 		while (room)
 		{
-			if ((t_room*)room->content != START && (t_room*)room->content != END)
-				ft_lstadd(&((t_room*)room->content)->back_link, add_link(route->content));
+			if ((t_room*)room->content != START &&
+					(t_room*)room->content != END)
+				ft_lstadd(&((t_room*)room->content)->back_link,
+						add_link(route->content));
 			room = room->next;
 		}
 		route = route->next;
 	}
 }
 
-static void create_paths_list(t_data *data)
+static void	create_paths_list(t_data *data)
 {
 	t_list	*new_list;
 	t_list	*temp;
@@ -55,7 +63,8 @@ static void create_paths_list(t_data *data)
 	}
 }
 
-static void check_and_paste_link(t_list *path, t_list *another_path, t_list *paths_list)
+static void	check_and_paste_link(t_list *path,
+		t_list *another_path, t_list *paths_list)
 {
 	int		flag;
 	t_list	*p;
@@ -67,7 +76,8 @@ static void check_and_paste_link(t_list *path, t_list *another_path, t_list *pat
 		return ;
 	while (flag)
 	{
-		if (p != path && ((t_list*)((t_list*)p->content)->content)->content == another_path)
+		if (p != path && ((t_list*)((t_list*)p->content)->content)->content ==
+				another_path)
 			return ;
 		if (p->next)
 			p = p->next;
@@ -94,71 +104,31 @@ static void	fill_paths_list(t_data *data, t_list *paths, t_list *adjacency)
 			links = ((t_room*)room->content)->back_link;
 			while (links)
 			{
-				check_and_paste_link(adjacency->content, links->content, data->path_adjacency);
+				check_and_paste_link(adjacency->content, links->content,
+						data->path_adjacency);
 				links = links->next;
 			}
 			room = room->next;
 		}
+		adjacency->content_size = ft_lstcount(adjacency->content);
 		paths = paths->next;
 		adjacency = adjacency->next;
 	}
 }
 
-
-
-
-void test_debug_print(t_data *data)
-{
-	t_list *adj;
-	t_list *cont;
-	t_list *p;
-	int count;
-	int n;
-
-	adj = data->path_adjacency;
-	n = 1;
-	while (adj)
-	{
-		ft_printf("%3d: {", n);
-		cont = adj->content;
-		cont = cont->next;
-		while (cont)
-		{
-			p = data->path_adjacency;
-			count = 1;
-			while (p != cont->content)
-			{
-				p = p->next;
-				count++;
-			}
-			cont = cont->next;
-			ft_printf("%d, ", count);
-		}
-		ft_printf("}\n");
-		adj = adj->next;
-		n++;
-	}
-}
-
-
-
-
-
-
-
-void	prepare_paths_data(t_data *data)
+void		prepare_paths_data(t_data *data)
 {
 	add_links_to_path(data);
 	create_paths_list(data);
 	fill_paths_list(data, data->all_paths, data->path_adjacency);
+	delete_long_paths(data);
+	paths_sort(&data->path_adjacency, -1);
 	data->current_efficiency = INT_MAX;
-
-	test_debug_print(data);
-
 	if (check_path_uniqueness(data->path_adjacency))
-		save_paths(data, data->path_adjacency, &data->unique_paths);
+		check_and_safe_paths(data);
 	else
+	{
 		path_selection(data, data->path_adjacency);
-
-//	test_debug_print(data);
+		paths_sort(&data->unique_paths, 1);
+	}
 }
