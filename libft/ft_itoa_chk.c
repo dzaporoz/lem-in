@@ -16,8 +16,8 @@ int		ft_itoa_chk(char *string, int number)
 {
 	char *test;
 
-	test = ft_itoa(integer);
-	integer = (!ft_strcmp(string, test)) ? 1 : 0;
+	test = ft_itoa(number);
+	number = (!ft_strcmp(string, test)) ? 1 : 0;
 	free(test);
-	return (integer);
+	return (number);
 }

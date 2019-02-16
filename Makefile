@@ -6,7 +6,7 @@
 #    By: dzaporoz <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/14 19:11:43 by dzaporoz          #+#    #+#              #
-#    Updated: 2019/02/14 19:52:54 by dzaporoz         ###   ########.fr        #
+#    Updated: 2019/02/15 17:46:36 by dzaporoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,6 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
-	make fclean -C libft
+	@rm -f libft/libftprintf.a
 
 re: fclean all
